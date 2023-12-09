@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue.js App</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="app">
+      <section class="container">
+        <p>Contagem: {{ count }}</p>
+
+        <button class="btn btn-primary" @click="incrementCount">Importar dados</button>
+        <button class="btn btn-primary" @click="fetchData">Listar dados</button>
+        <pre v-if="jsonData">Dados do Servidor: {{ jsonData }}</pre>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+    <script>
+      const { createApp, ref, onMounted } = Vue;
+
+      createApp({
+        setup() {
+          const count = ref(0);
+          const jsonData = ref(null);
+
+          const incrementCount = () => {
+            count.value++;
+          };
+
+          const fetchData = async (page) => {
+            try {
+              const response = await fetch("/api/people/import");
+
+              const data = await response.json();
+
+              jsonData.value = data;
+            } catch (error) {
+              console.error("Erro:", error);
+            }
+          };
+
+          onMounted(fetchData(1));
+
+          return {
+            count,
+            incrementCount,
+            fetchData,
+            jsonData,
+          };
+        },
+      }).mount("#app");
+    </script>
+  </body>
+</html>
