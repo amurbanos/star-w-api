@@ -1,4 +1,4 @@
-# StarWars Ingfo
+# StarWars Info
 
 Sistema para obter informações sobre o universo de Star Wars!
 
