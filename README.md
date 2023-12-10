@@ -53,3 +53,18 @@ Para parar o sistema e remover os contêineres, você pode executar:
 
 ```bash
 docker-compose down
+```
+
+## Testando 
+
+Para rodar os testes execute:
+
+```bash
+docker exec -it star-w-api-app-1 npm test
+```
+Substituindo(se necessário) "star-w-api-app-1" pelo nome do container em execução
+
+![Captura de tela de 2023-12-10 10-52-37](https://github.com/amurbanos/star-w-api/assets/14782811/4a6cc141-c4f3-4c10-9078-29ff4c1445ae)
+
+
+
