@@ -4,54 +4,153 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Vue.js App</title>
-    <link
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
+
+    <link href="/styles/app.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
   </head>
+
   <body>
     <div id="app">
-      <section class="container">
-        <p>Contagem: {{ count }}</p>
+      <div class="container">
+        <h2 class="text-center">Universo Star Wars</h2>
+      </div>
 
-        <button class="btn btn-primary" @click="incrementCount">Importar dados</button>
-        <button class="btn btn-primary" @click="fetchData">Listar dados</button>
-        <pre v-if="jsonData">Dados do Servidor: {{ jsonData }}</pre>
+      <section class="container mt-5">
+        <div v-if="alertTop" :class="[`alert-${alertTop.type}`, 'alert']">
+          {{ alertTop.message }}
+        </div>
+      </section>
+
+      <section class="container mt-5">
+        <div class="row">
+          <div class="col-6">
+            <button
+              class="btn btn-dark"
+              @click="importData"
+              :disabled="buttonImportDisabled"
+            >
+              Importar dados
+            </button>
+          </div>
+          <div class="col-6 text-end">
+            <button
+              class="btn btn-dark"
+              @click="fetchData"
+              :disabled="buttonFetchDisabled"
+            >
+              Atualizar lista
+            </button>
+          </div>
+          <div class="col-12">
+            <hr />
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12">
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th>Nome</th>
+                  <th>Genero</th>
+                  <th>Altura</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="person in jsonData" :key="person._id">
+                  <td>{{ person.name }}</td>
+                  <td>{{ person.gender }}</td>
+                  <td>{{ person.height }} cm</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </section>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
     <script>
       const { createApp, ref, onMounted } = Vue;
 
       createApp({
         setup() {
-          const count = ref(0);
           const jsonData = ref(null);
+          const buttonImportDisabled = ref(false);
+          const buttonFetchDisabled = ref(false);
+          const alertTop = ref(null);
 
-          const incrementCount = () => {
-            count.value++;
-          };
+          onMounted(async () => {
+            await fetchData();
+          });
 
-          const fetchData = async (page) => {
+          /**
+           * Importa dados de pessoas a partir de uma API.
+           *
+           * Esta função faz uma chamada para a API "/api/people/import" e importa os dados.
+           *
+           * @async
+           * @function
+           * @throws {Error} Se ocorrer um erro durante a chamada da API.
+           */
+          const importData = async () => {
             try {
+              alertTop.value = {
+                type: "light",
+                message:
+                  "Importação iniciada... clique em atualizar lista para ver já importados! ",
+              };
+
+              buttonImportDisabled.value = true;
               const response = await fetch("/api/people/import");
-
               const data = await response.json();
-
-              jsonData.value = data;
             } catch (error) {
               console.error("Erro:", error);
+              alertTop.value = {
+                type: "danger",
+                message: "Erro ao importar dados!",
+              };
+            } finally {
+              buttonImportDisabled.value = false;
+              alertTop.value = {
+                type: "success",
+                message: "Importacao dos dados finalizada!",
+              };
             }
           };
 
-          onMounted(fetchData(1));
+          /**
+           * Busca dados de pessoas a partir de uma API.
+           *
+           * Esta função faz uma chamada para a API "/api/people" e recupera os dados.
+           *
+           * @async
+           * @function
+           * @throws {Error} Se ocorrer um erro durante a chamada da API.
+           */
+          const fetchData = async () => {
+            try {
+              buttonFetchDisabled.value = true;
+              const response = await fetch("/api/people");
+              const data = await response.json();
+              jsonData.value = data;
+            } catch (error) {
+              console.error("Erro:", error);
+              alertTop.value = {
+                type: "danger",
+                message: "Erro ao atualizar lista!",
+              };
+            } finally {
+              buttonFetchDisabled.value = false;
+            }
+          };
 
           return {
-            count,
-            incrementCount,
             fetchData,
+            importData,
             jsonData,
+            buttonImportDisabled,
+            buttonFetchDisabled,
+            alertTop,
           };
         },
       }).mount("#app");
