@@ -32,7 +32,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina antes d
 4. Execute o seguinte comando para iniciar o sistema usando Docker Compose:
 
     ```bash
-    docker-compose up
+    docker compose up
     ```
 
    Isso iniciará os contêineres necessários e configurará o ambiente.
@@ -52,7 +52,7 @@ Certifique-se de ter as seguintes ferramentas instaladas em sua máquina antes d
 Para parar o sistema e remover os contêineres, você pode executar:
 
 ```bash
-docker-compose down
+docker compose down
 ```
 
 ## Testando 
