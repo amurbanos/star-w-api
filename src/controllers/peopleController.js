@@ -1,14 +1,7 @@
 const peopleController = {};
-const axios = require('axios');
-const mongoose = require('mongoose');
-const Person = require('../models/Person');
-const dbConfig = require('../../config/db.config.js');
-const apiUrl = "https://swapi.dev/api/people";
-
-mongoose.connect(
-  dbConfig.url, 
-  { useNewUrlParser: true, useUnifiedTopology: true }
-);
+const apiConfig = require("../../config/api.config");
+const peopleService = require('../services/peopleService');
+const Person = require("../models/Person");
 
 /**
  * Método para importar pessoas da API.
@@ -17,32 +10,15 @@ mongoose.connect(
  * @param {Object} res - O objeto de resposta express.
  */
 peopleController.import = async (req, res) => {
-  let nextPage = apiUrl;
-
-  while (nextPage !== null) {
-    const data = await axios.get(nextPage);
-    const people = data.data.results;
-
-    people.forEach(person => {
-      Person.countDocuments({ name: person.name }).then(count => {
-        if (count === 0) {
-          const newPerson = new Person({
-            name: person.name,
-            height: person.height,
-            gender: person.gender,
-          });
-        
-          newPerson.save();
-        } else {
-          console.log("Pessoa já cadastrada");
-        }
-      });
-    });
-
-    nextPage = data.data.next;
+  try {
+    await peopleService.importPeople(apiConfig.url);
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Erro na importação de pessoas:", error);
+    res
+      .status(500)
+      .json({ success: false, error: "Erro na importação" });
   }
-
-  res.json({ success: true });
 };
 
 /**
@@ -59,8 +35,7 @@ peopleController.list = async (req, res) => {
 
     res.status(200).json(people);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erro ao buscar pessoas.' });
+    res.status(500).json({ error: "Erro ao buscar." });
   }
 };
 
