@@ -102,7 +102,7 @@
               };
 
               buttonImportDisabled.value = true;
-              const response = await fetch("/api/people/import");
+              const response = await fetch("/api/people/import", {method: "POST"});
               const data = await response.json();
             } catch (error) {
               console.error("Erro:", error);
