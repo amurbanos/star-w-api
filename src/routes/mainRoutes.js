@@ -4,6 +4,6 @@ const peopleController = require('../controllers/peopleController');
 
 router.get('/people', peopleController.list);
 
-router.get('/people/import', peopleController.import);
+router.post('/people/import', peopleController.import);
 
 module.exports = router;
