@@ -1,8 +1,8 @@
-const axios = require('axios');
-const Person = require('../models/Person');
+const axios = require("axios");
+const Person = require("../models/Person");
 
 /**
- * Importa pessoas de uma API externa 
+ * Importa pessoas de uma API externa
  * e as salva no banco de dados se ainda não existirem localmente.
  *
  * @param {string} apiUrl - A URL da API de onde as pessoas serão importadas.
@@ -17,7 +17,9 @@ const importPeople = async (apiUrl) => {
     const people = data.data.results;
 
     for (const person of people) {
-      const count = await Person.countDocuments({ name: person.name });
+      const count = await Person.countDocuments({
+        name: person.name,
+      });
 
       if (count === 0) {
         await Person.create({
