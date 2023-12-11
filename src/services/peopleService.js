@@ -13,7 +13,7 @@ const importPeople = async (apiUrl) => {
   let nextPage = apiUrl;
 
   while (nextPage !== null) {
-    const data = await axios.post(nextPage);
+    const data = await axios.get(nextPage);
     const people = data.data.results;
 
     for (const person of people) {
