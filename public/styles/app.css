@@ -12490,3 +12490,8 @@ legend {
 .list-group-item-action:hover {
   background-color: #23272b;
 }
+
+body{
+  background-color: #000;
+  color: #fff;
+}
